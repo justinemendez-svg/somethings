@@ -1286,6 +1286,7 @@ def generate_html():
                             <span class="meta-label">Resale Partner</span>
                             <span class="meta-value">${{account.resale_partner || 'None'}}</span>
                         </div>
+                        <div class="meta-item" style="visibility: hidden;"></div>
                         <div class="meta-item">
                             <span class="meta-label">Bullseye Predicted Priority Score</span>
                             <span class="meta-value">${{account.bullseye && account.bullseye.predicted_priority_score != null ? Number(account.bullseye.predicted_priority_score).toLocaleString() : 'N/A'}}</span>
@@ -1298,6 +1299,7 @@ def generate_html():
                             <span class="meta-label">Bullseye Predicted Opportunity Value</span>
                             <span class="meta-value">${{account.bullseye && account.bullseye.predicted_opportunity_value != null ? formatCurrency(account.bullseye.predicted_opportunity_value) : 'N/A'}}</span>
                         </div>
+                        <div class="meta-item" style="visibility: hidden;"></div>
                         <div class="meta-item">
                             <span class="meta-label">Last Touch Date</span>
                             <span class="meta-value">${{account.last_touch.date ? new Date(account.last_touch.date).toLocaleDateString() : 'N/A'}}</span>
