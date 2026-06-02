@@ -70,7 +70,7 @@ def generate_html():
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>APAC Account Intelligence & Expansion | Mitch Young</title>
+    <title>Northstar — APAC Account Intelligence | Mitch Young</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {{
@@ -146,6 +146,22 @@ def generate_html():
 
         .metric-value a:hover {{
             border-bottom-color: #d1f470;
+        }}
+
+        .account-summary-card {{
+            background: white;
+            padding: 10px 14px;
+            border-radius: 6px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            border-left: 4px solid #03363d;
+            margin-bottom: 8px;
+        }}
+
+        .account-summary-text {{
+            font-size: 13px;
+            color: #374151;
+            line-height: 1.5;
+            margin-top: 4px;
         }}
 
         .main-layout {{
@@ -593,8 +609,8 @@ def generate_html():
 </head>
 <body>
     <div class="header">
-        <h1>Account Intelligence Dashboard</h1>
-        <p class="subtitle">APAC | Product Whitespace</p>
+        <h1>Northstar</h1>
+        <p class="subtitle">APAC Account Intelligence | Product Whitespace & Bullseye Prioritization</p>
         <p class="subtitle" style="margin-top: 8px; font-size: 13px;">Last updated: {datetime.now().strftime('%B %d, %Y at %I:%M %p')}</p>
     </div>
 
@@ -736,6 +752,11 @@ def generate_html():
                     <div class="metric-label">Pipeline ARR</div>
                     <div class="metric-value" id="metricPipelineARR">—</div>
                 </div>
+            </div>
+
+            <div class="account-summary-card" id="accountSummaryCard" style="display: none;">
+                <div class="metric-label">Account Summary</div>
+                <p class="account-summary-text" id="metricAccountSummary">—</p>
             </div>
 
             <div class="account-detail" id="accountDetail">
@@ -1040,6 +1061,15 @@ def generate_html():
             document.getElementById('metricAccountName').innerHTML = `<a href="${{sfLink}}" target="_blank">${{account.account_name}}</a>`;
             document.getElementById('metricAccountARR').textContent = formatCurrency(account.account_arr);
 
+            // Account summary (CRM_DESCRIPTION from Bullseye)
+            const summaryCard = document.getElementById('accountSummaryCard');
+            if (account.crm_description && account.crm_description.trim()) {{
+                document.getElementById('metricAccountSummary').textContent = account.crm_description;
+                summaryCard.style.display = 'block';
+            }} else {{
+                summaryCard.style.display = 'none';
+            }}
+
             // Count only opportunities with valid IDs
             const validOpps = account.opportunities.filter(opp => opp.opp_id);
             document.getElementById('metricOpps').textContent = validOpps.length;
@@ -1213,10 +1243,6 @@ def generate_html():
                     <div class="account-name">${{account.account_name}}</div>
                     <div class="account-meta-grid">
                         <div class="meta-item">
-                            <span class="meta-label">ARR</span>
-                            <span class="meta-value">${{formatCurrency(account.account_arr)}}</span>
-                        </div>
-                        <div class="meta-item">
                             <span class="meta-label">Segment</span>
                             <span class="meta-value">${{account.segment || 'N/A'}}</span>
                         </div>
@@ -1227,6 +1253,10 @@ def generate_html():
                         <div class="meta-item">
                             <span class="meta-label">Health</span>
                             <span class="meta-value">${{healthBadge}}</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">6sense Buying Stage</span>
+                            <span class="meta-value">${{account.buying_stage_6sense || 'N/A'}}</span>
                         </div>
                         <div class="meta-item">
                             <span class="meta-label">AE</span>
@@ -1256,7 +1286,18 @@ def generate_html():
                             <span class="meta-label">Resale Partner</span>
                             <span class="meta-value">${{account.resale_partner || 'None'}}</span>
                         </div>
-                        <div class="meta-item" style="visibility: hidden;"></div>
+                        <div class="meta-item">
+                            <span class="meta-label">Bullseye Predicted Priority Score</span>
+                            <span class="meta-value">${{account.bullseye && account.bullseye.predicted_priority_score != null ? Number(account.bullseye.predicted_priority_score).toLocaleString() : 'N/A'}}</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Bullseye Predicted Expected Value</span>
+                            <span class="meta-value">${{account.bullseye && account.bullseye.predicted_expected_value != null ? formatCurrency(account.bullseye.predicted_expected_value) : 'N/A'}}</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Bullseye Predicted Opportunity Value</span>
+                            <span class="meta-value">${{account.bullseye && account.bullseye.predicted_opportunity_value != null ? formatCurrency(account.bullseye.predicted_opportunity_value) : 'N/A'}}</span>
+                        </div>
                         <div class="meta-item">
                             <span class="meta-label">Last Touch Date</span>
                             <span class="meta-value">${{account.last_touch.date ? new Date(account.last_touch.date).toLocaleDateString() : 'N/A'}}</span>
@@ -1313,6 +1354,10 @@ def generate_html():
                 // Account name
                 const accountNameEl = container.querySelector('.account-name');
                 if (accountNameEl) addTranslationToElement(accountNameEl);
+
+                // Account summary (CRM_DESCRIPTION)
+                const summaryEl = document.getElementById('metricAccountSummary');
+                if (summaryEl) addTranslationToElement(summaryEl);
 
                 // Gong brief, key points, next steps
                 const gongTexts = container.querySelectorAll('.gong-section p, .gong-section li');

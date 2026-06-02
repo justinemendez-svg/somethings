@@ -133,6 +133,21 @@ GONG_ACCOUNT AS (
         CALL_SPOTLIGHT AS ACCOUNT_CALL_SPOTLIGHT,
         CALL_SPOTLIGHT_KEY_POINTS AS ACCOUNT_CALL_SPOTLIGHT_KEY_POINTS
     FROM GONG_CALLS
+),
+
+BULLSEYE AS (
+    SELECT
+        CRM_ACCOUNT_ID,
+        CRM_DESCRIPTION,
+        CRM_ACCOUNT_BUYING_STAGE_6_SENSE,
+        PREDICTED_PRIORITY_SCORE,
+        PREDICTED_EXPECTED_VALUE,
+        PREDICTED_OPPORTUNITY_VALUE
+    FROM PRESENTATION.BULLSEYE.CUSTOMER_PRIORITIZATION
+    QUALIFY ROW_NUMBER() OVER (
+        PARTITION BY CRM_ACCOUNT_ID
+        ORDER BY PREDICTED_PRIORITY_SCORE DESC NULLS LAST
+    ) = 1
 )
 
 SELECT
@@ -167,6 +182,12 @@ SELECT
     ga.ACCOUNT_CALL_SPOTLIGHT_NEXT_STEPS,
     ga.ACCOUNT_CALL_SPOTLIGHT,
     ga.ACCOUNT_CALL_SPOTLIGHT_KEY_POINTS,
+
+    be.CRM_DESCRIPTION,
+    be.CRM_ACCOUNT_BUYING_STAGE_6_SENSE,
+    be.PREDICTED_PRIORITY_SCORE,
+    be.PREDICTED_EXPECTED_VALUE,
+    be.PREDICTED_OPPORTUNITY_VALUE,
 
     a.THIRD_PARTY_AI_BOT,
     a.PAID_SEATS_CURRENT_DATE,
@@ -228,6 +249,8 @@ LEFT JOIN PIPELINE_SUMMARY p
     ON a.CRM_ACCOUNT_ID = p.CRM_ACCOUNT_ID
 LEFT JOIN GONG_ACCOUNT ga
     ON a.CRM_ACCOUNT_ID = ga.CRM_ACCOUNT_ID
+LEFT JOIN BULLSEYE be
+    ON a.CRM_ACCOUNT_ID = be.CRM_ACCOUNT_ID
 
 WHERE a.SVP_NAME = 'Mitch Young'
   AND a.ARR_USD_CUSTOMER_CURRENT_DATE > 0
@@ -559,6 +582,15 @@ def main():
                 'employee_range': account_row['CRM_EMPLOYEE_RANGE'],
                 'paid_seats': account_row['PAID_SEATS_CURRENT_DATE'],
                 'is_top_3000': account_row['TOP_3000_FLAG'],
+
+                # Bullseye prioritization (PRESENTATION.BULLSEYE.CUSTOMER_PRIORITIZATION)
+                'crm_description': account_row.get('CRM_DESCRIPTION'),
+                'buying_stage_6sense': account_row.get('CRM_ACCOUNT_BUYING_STAGE_6_SENSE'),
+                'bullseye': {
+                    'predicted_priority_score': account_row.get('PREDICTED_PRIORITY_SCORE'),
+                    'predicted_expected_value': account_row.get('PREDICTED_EXPECTED_VALUE'),
+                    'predicted_opportunity_value': account_row.get('PREDICTED_OPPORTUNITY_VALUE'),
+                },
 
                 # Team assignments
                 'rvp': account_row['RVP_NAME'],
