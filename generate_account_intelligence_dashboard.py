@@ -610,8 +610,7 @@ def generate_html():
 <body>
     <div class="header">
         <h1>Account Readiness &amp; Growth Dashboard</h1>
-        <p class="subtitle">APAC | Product Whitespace & Bullseye Prioritization</p>
-        <p class="subtitle" style="margin-top: 8px; font-size: 13px;">Last updated: {datetime.now().strftime('%B %d, %Y at %I:%M %p')}</p>
+        <p class="subtitle" style="font-size: 13px;">Last updated: {datetime.now().strftime('%B %d, %Y at %I:%M %p')}</p>
     </div>
 
     <div class="main-layout">
