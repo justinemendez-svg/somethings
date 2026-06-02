@@ -70,7 +70,7 @@ def generate_html():
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Northstar — APAC Account Intelligence | Mitch Young</title>
+    <title>Account Readiness & Growth Dashboard | APAC — Mitch Young</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {{
@@ -609,8 +609,8 @@ def generate_html():
 </head>
 <body>
     <div class="header">
-        <h1>Northstar</h1>
-        <p class="subtitle">APAC Account Intelligence | Product Whitespace & Bullseye Prioritization</p>
+        <h1>Account Readiness &amp; Growth Dashboard</h1>
+        <p class="subtitle">APAC | Product Whitespace & Bullseye Prioritization</p>
         <p class="subtitle" style="margin-top: 8px; font-size: 13px;">Last updated: {datetime.now().strftime('%B %d, %Y at %I:%M %p')}</p>
     </div>
 
