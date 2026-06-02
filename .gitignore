@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.pyc
+venv/
+.venv/
+*.egg-info/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+
+# Local env / secrets — never commit
+.env
+*.token
+
+# Claude local settings
+.claude/
